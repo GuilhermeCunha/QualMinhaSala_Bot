@@ -5,163 +5,135 @@ import requests
 from datetime import datetime
 from pytz import timezone
 import time
+import json
 
 bot_token = '823857629:AAFwWPAHsYANt6Za3bZcYFazY1-Cof7kxNw'
 telegram = telepot.Bot(bot_token)
-
-
-class Usuario():
-    def __init__(self, chatID):
-        self.chatID = chatID
-        self.ra = None
-
-    def addRa(self, ra):
-        self.ra = ra
-
-    def getchatid(self):
-        return self.chatID
 
 def resposta(ra):
     try:
         url = "http://senaiweb.fieb.org.br/MinhaAula/api/aulas?ra=" + ra
         objeto = requests.get(url).json()
-
-        Desenvolvimento = 'Técnico em Desenvolvimento de Sistemas'
-        Eletrotecnica = 'Técnico em Eletrotécnica'
-        Manutencao = 'Técnico em Manutenção Automotiva'
-
-        nomeProfessor = objeto[0]['professor']
-        turno = objeto[0]['turno']
-        codTurma = objeto[0]['codTurma']
-        dtInicial = objeto[0]['dtInicial']
-        dtFinal = objeto[0]['dtFinal']
-        curso = unidecode(objeto[0]['curso'])
-        disciplina = objeto[0]['disciplina']
-        predio = objeto[0]['predio']
-        bloco = objeto[0]['bloco']
-        sala = objeto[0]['sala']
-        data = objeto[0]['data']
-        horaInicial = objeto[0]['horaInicial']
-        horaFinal = objeto[0]['horaFinal']
-
-        nomeCurso = curso + '\n'
-
-        if 'Tecnico em Manutencao Automotiva' in curso:
-            retorno = predio + " - " + bloco + " em " + sala + "\n" + horaInicial + " - " + horaFinal
-        if 'Tecnico em Desenvolvimento de Sistemas' in curso:
-            retorno = bloco + " em " + sala + "\n" + horaInicial + " - " + horaFinal
-        if 'Tecnico em Eletrotecnica' in curso:
-            retorno = predio + " - " + bloco + " em " + sala + "\n" + horaInicial + " - " + horaFinal
-        resp = (nomeCurso + retorno)
-
-        return resp
     except:
         return ("Algum erro ocorreu, confira seu RA")
 
-Usuarios = []
-RAs = []
-def recebendoMsg(msg):
-    tipoMsg, tipoChat, chatID = telepot.glance(msg)
-    frase = msg['text']
+    nomeProfessor = objeto[0]['professor']
+    turno = objeto[0]['turno']
+    codTurma = objeto[0]['codTurma']
+    dtInicial = objeto[0]['dtInicial']
+    dtFinal = objeto[0]['dtFinal']
+    curso = unidecode(objeto[0]['curso'])
+    disciplina = objeto[0]['disciplina']
+    predio = objeto[0]['predio']
+    bloco = objeto[0]['bloco']
+    sala = objeto[0]['sala']
+    data = objeto[0]['data']
+    horaInicial = objeto[0]['horaInicial']
+    horaFinal = objeto[0]['horaFinal']
+
+    nomeCurso = curso + '\n'
+
+    if 'Tecnico em Manutencao Automotiva' in curso:
+        retorno = predio + " - " + bloco + " em " + sala + "\n" + horaInicial + " - " + horaFinal
+    if 'Tecnico em Desenvolvimento de Sistemas' in curso:
+        retorno = bloco + " em " + sala + "\n" + horaInicial + " - " + horaFinal
+    if 'Tecnico em Eletrotecnica' in curso:
+        retorno = predio + " - " + bloco + " em " + sala + "\n" + horaInicial + " - " + horaFinal
+        resp = (nomeCurso + retorno)
+
+    if len(objeto) == 2:
+        retorno = ""
+        nomeProfessor = objeto[1]['professor']
+        turno = objeto[1]['turno']
+        codTurma = objeto[1]['codTurma']
+        dtInicial = objeto[1]['dtInicial']
+        dtFinal = objeto[1]['dtFinal']
+        curso = unidecode(objeto[1]['curso'])
+        disciplina = objeto[1]['disciplina']
+        predio = objeto[1]['predio']
+        bloco = objeto[1]['bloco']
+        sala = objeto[1]['sala']
+        data = objeto[1]['data']
+        horaInicial = objeto[1]['horaInicial']
+        horaFinal = objeto[1]['horaFinal']
+
+        if 'Tecnico em Manutencao Automotiva' in curso:
+            retorno2 = predio + " - " + bloco + " em " + sala + "\n" + horaInicial + " - " + horaFinal
+        if 'Tecnico em Desenvolvimento de Sistemas' in curso:
+            retorno2 = bloco + " em " + sala + "\n" + horaInicial + " - " + horaFinal
+        if 'Tecnico em Eletrotecnica' in curso:
+            retorno2 = predio + " - " + bloco + " em " + sala + "\n" + horaInicial + " - " + horaFinal
+
+        resp = (resp + "\n\n " + retorno2)
+
+    return resp
+
+
+def pegaHorario():
     data_e_hora_atual = datetime.now()
     horaAtual = data_e_hora_atual.strftime('%H:%M')
-    primeiroAcesso = True
-    if chatID in Usuarios:
-        primeiroAcesso = False
 
-    if primeiroAcesso == True:
-        telegram.sendMessage(chatID, "ID Cadastrado\nAgora digite seu RA para concluir o cadastro")
-        Usuarios.append(chatID)
+    if horaAtual == "00:00":
+        return True
+
+
+#Usuarios = [{"username": "ADM", "chatid": "ADM", "ra": "ADM"}]
+def recebendoMsg(msg):
+    tipoMsg, tipoChat, chatID = telepot.glance(msg)
+    try:
+        Usuarios = Usuarios = json.load(open('Usuarios.json', 'r'))
+    except:
+        Usuarios = []
+
+    updates = telegram.getUpdates()
+    primeiroNome = updates[-1]['message']['from']['first_name']
+    frase = msg['text']
+    if '/start' in frase:
+        telegram.sendMessage(chatID, "Seja bem vindo ao MinhaAula!\n Digite seu RA para começar")
+    if '162.' in frase:
+        #print(len(Usuarios))
+        if len(Usuarios) != 0:
+            Usuarios = json.load(open('Usuarios.json', 'r'))
+            #print("USUARIO CARREGADO")
+
+        usuariojson = {'first_name': primeiroNome, 'chatid': str(chatID), 'ra': frase}
+        Usuarios.append(usuariojson)
+        #print(len(Usuarios))
+        with open('Usuarios.json', 'w') as arquivo:
+            json.dump(Usuarios, arquivo)
+            arquivo.close()
+        i=0
+        while i < len(Usuarios):
+            if str(chatID) in Usuarios[i]['chatid']:
+                telegram.sendMessage(chatID, "Sua conta já está cadastrada no JSON")
+                break
+            i += 1
+
+    if '/consultarUsuarios' in frase:
+        with open('Usuarios.json', 'r') as arquivo:
+            Usuarios = json.load(arquivo)
+            arquivo.close()
         i = 0
-        primeiroAcesso = False
-
-    if '162.' in frase and len(frase) == 10:
-        RAs.append(frase)
-        telegram.sendMessage(chatID, "RA cadastrado\n Escreva /comousar para saber como o sistema funciona")
-    #if 'horario' in frase:
-        #dataUTC = datetime.now(timezone('UTC'))
-        #dataBahia = dataUTC.astimezone(timezone('America/Bahia'))
-        #horaBahia = dataBahia.strftime('%H:%M')
-        #telegram.sendMessage(chatID, horaBahia)
-
-    if 'consultarconta' in frase:
-        cont = 0
-        while cont < len(Usuarios):
-            if chatID == Usuarios[cont]:
-                telegram.sendMessage(chatID,"ChatID: " + str(Usuarios[cont]) + "\nRA: " + RAs[cont])
-                break
-            cont += 1
-
-    if '/cadastrarhorario' in frase:
-        cont = 0
-        while cont < len(Usuarios):
-            if chatID == Usuarios[cont]:
-                break
-            cont += 1
-        mensagem = str(frase)
-        texto = mensagem.split(" ")
-        dias = int(texto[2])
-        telegram.sendMessage(chatID, "Você receberá onde será a sua sala às " + texto[1] + " durante os próximos " + texto[2] + " dias.")
-
-        dataUTC = datetime.now(timezone('UTC'))
-        dataBahia = dataUTC.astimezone(timezone('America/Bahia'))
-        horaBahia = dataBahia.strftime('%H:%M')
-
-        while horaBahia != texto[1]:
-            dataUTC = datetime.now(timezone('UTC'))
-            dataBahia = dataUTC.astimezone(timezone('America/Bahia'))
-            horaBahia = dataBahia.strftime('%H:%M')
-
-        contDias = 0
-        while(contDias < dias):
-            telegram.sendMessage(chatID, resposta(RAs[cont]))
-            time.sleep(86400)
-            contDias += 1
-
-
-    if 'Bom dia' in frase:
-        resp = "Ótimo dia para nós!"
-    if '/comousar' in frase:
-        resp = "A utilização é bem simples, para saber qual o local da sua sala basta escrever /minhasala ou clicar no comando /minhasala para obter " \
-               "a informação!\nSe pretende consultar a sala de alguma outra pessoa, basta digitar consultar e o RA da pessoa " \
-               "ex: consultar 123.456789" \
-               "\nCaso queira predefinir um horário específico para receber onde será a sua aula escreva /avancado para saber mais!"
-    if '/avancado' in frase:
-        resp = "Para configurar um horário específico, você devera informar um horário e a quantidade de dias que esse " \
-               "horário será utilizado. Por exemplo, se você quiser ser notificado as 11:00 dos próximos 5 dias, escreva: " \
-               "/cadastrarhorario 11:00 5\nObs: Ao configurar um horário/quantidade de dias específos, você não poderá " \
-               "executar outros comandos como : /desenvolvidopor, /contato ... etc"
-
-    if 'consultar' in frase:
-        mensagem = str(frase)
-        texto = mensagem.split(" ")
-        telegram.sendMessage(chatID, resposta(texto[1]))
-    if '/contribuidores' in frase:
-        resp = "Agradecimentos a Eduardo Correia e Felipe Bastos"
-    if '/desenvolvidopor' in frase:
-        telegram.sendMessage(chatID, "*Guilherme Cunha*\n_Aluno de Desenvolvimento de Sitemas_", parse_mode='Markdown')
-        telegram.sendContact(chatID, "5571992711726", "Guilherme", "Cunha", disable_notification=None,
-                             reply_to_message_id=None, reply_markup=None)
-    if '/contato' in frase:
-        telegram.sendContact(chatID, "5571992711726", "Guilherme", "Cunha", disable_notification=None,
-                             reply_to_message_id=None, reply_markup=None)
+        #telegram.sendMessage(chatID, str(len(Usuarios)))
+        while i < len(Usuarios):
+            telegram.sendMessage(chatID,
+                                 "\nPrimeiro nome: " + Usuarios[i]['first_name'] + "\nChatID: " + str(Usuarios[i]['chatid']) + "\nRA: " +
+                                 str(Usuarios[i]['ra']))
+            i += 1
     if '/minhasala' in frase:
-        cont = 0
-        while cont < len(Usuarios):
-            if chatID == Usuarios[cont]:
-                telegram.sendMessage(chatID, resposta(RAs[cont]))
+        Usuarios = Usuarios = json.load(open('Usuarios.json', 'r'))
+        i=0
+        while i < len(Usuarios):
+            if primeiroNome == Usuarios[i]['first_name']:
+                #print(Usuarios[i]["ra"])
+                telegram.sendMessage(chatID, resposta(Usuarios[i]["ra"]))
                 break
-            cont += 1
-    if '123.456789' in frase:
-        resp = "CIMATEC X - Xº ANDAR na sala X"
-    if 'Quem te criou?' in frase:
-        resp = 'Guilherme Cunha, aluno de Desenvolvimento de Sistemas'
+            i += 1
 
-    telegram.sendMessage(chatID, resp)
-
-
-#telegram.getUpdates()
 telegram.message_loop(recebendoMsg)
-
 while True:
     pass
+    #if Usuarios:
+        #pass
+        # Colocar parte de enviar mensagem no horário
+
