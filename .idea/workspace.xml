@@ -152,7 +152,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Main">
+  <component name="RunManager" selected="Python.Testes">
     <configuration name="Banco" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="QualMinhaSala_Bot" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -218,8 +218,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Main" />
         <item itemvalue="Python.Testes" />
+        <item itemvalue="Python.Main" />
         <item itemvalue="Python.Banco" />
       </list>
     </recent_temporary>
