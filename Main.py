@@ -1,8 +1,10 @@
 import telepot
 import ChatBot
+from Banco import Banco
 
 bot_token = '823857629:AAFwWPAHsYANt6Za3bZcYFazY1-Cof7kxNw'
-bot = ChatBot.Chatbot("CHATBOT")
+banco = Banco()
+bot = ChatBot.Chatbot("CHATBOT", banco)
 telegram = telepot.Bot(bot_token)
 
 def recebendoMsg(msg):

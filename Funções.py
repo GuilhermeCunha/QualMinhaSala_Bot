@@ -5,6 +5,7 @@ from datetime import datetime # Pegar o horário
 from pytz import timezone # Pegar o horário de um certo local
 
 def resposta(ra):
+    resp = 0
     try:
         url = "http://senaiweb.fieb.org.br/MinhaAula/api/aulas?ra=" + ra
         objeto = requests.get(url).json()
@@ -25,7 +26,7 @@ def resposta(ra):
     horaInicial = objeto[0]['horaInicial']
     horaFinal = objeto[0]['horaFinal']
 
-    nomeCurso = curso + '\n'
+    nomeCurso = curso + '\n\n'
 
     if 'Tecnico em Manutencao Automotiva' in curso:
         retorno = predio + " - " + bloco + " em " + sala + "\n" + horaInicial + " - " + horaFinal
@@ -33,7 +34,10 @@ def resposta(ra):
         retorno = bloco + " em " + sala + "\n" + horaInicial + " - " + horaFinal
     if 'Tecnico em Eletrotecnica' in curso:
         retorno = predio + " - " + bloco + " em " + sala + "\n" + horaInicial + " - " + horaFinal
-        resp = (nomeCurso + retorno)
+
+    resp = (nomeCurso + retorno)
+
+
 
     if len(objeto) == 2:
         retorno = ""
@@ -58,7 +62,8 @@ def resposta(ra):
         if 'Tecnico em Eletrotecnica' in curso:
             retorno2 = predio + " - " + bloco + " em " + sala + "\n" + horaInicial + " - " + horaFinal
 
-        resp = (resp + "\n\n " + retorno2)
+        resp = (resp + "\n" + retorno2)
+
 
     return resp
 
