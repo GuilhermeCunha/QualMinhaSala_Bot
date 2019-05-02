@@ -20,8 +20,8 @@ class Chatbot():
         return frase
 
     def pensa(self, primeiroNome, chatID, frase):
-        if '/cadastrar' in frase:
-            return "Escreva seu RA para cadastrar sua conta"
+        if '/start' in frase:
+            return "Seja bem vindo ao MinhaAula!\n Digite seu RA para finalizar a criação da sua conta!"
         if '/consultar' in frase:
             texto = str(frase)
             mensagem = texto.split(" ")
@@ -31,7 +31,7 @@ class Chatbot():
             if self.banco.acharUsuario(usuario):
                 return "Conta já cadastrada"
             self.banco.inserirUsuario(usuario)
-            return "Conta cadastrada com sucesso"
+            return "Conta cadastrada com sucesso\n\nPara saber quais as funções disponíveis, escreva: /funcoes"
         if '/minhasala' in frase:
             ra = self.banco.acharRAporID(chatID)
             if ra:
@@ -39,9 +39,13 @@ class Chatbot():
             else:
                 return "Conta não encontrada"
         if '/funcoes' in frase:
-            return "/Cadastrar\n/Consultar\n192.\n/minhasala\n/contascadastradas"
+            return "/consultar <RA> #Para consultar um RA não vinculado a conta\n/minhasala #Para receber onde será a sua sala\n/criadopor #Para saber quem é meu criador"
         if '/contascadastradas' in frase:
             return self.banco.listarUsuarios()
+        if '/criadopor' in frase:
+            return "Criador"
+
+            return
         return 'Função não configurada'
 
     #def fala(self,chatID, frase):

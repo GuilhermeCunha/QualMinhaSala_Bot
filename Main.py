@@ -16,7 +16,13 @@ def recebendoMsg(msg):
 
     if frase != 0:
         resposta = bot.pensa(primeiroNome, chatID, frase)
-        telegram.sendMessage(chatID, resposta)
+        if(resposta == "Criador"):
+            telegram.sendMessage(chatID, "*Guilherme Cunha*\n_Aluno de Desenvolvimento de Sitemas do SENAI CIMATEC_",
+                                 parse_mode='Markdown')
+            telegram.sendContact(chatID, "5571992711726", "Guilherme", "Cunha", disable_notification=None,
+                                 reply_to_message_id=None, reply_markup=None)
+        else:
+            telegram.sendMessage(chatID, resposta)
 
 
 telegram.message_loop(recebendoMsg)
