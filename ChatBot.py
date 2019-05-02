@@ -39,7 +39,7 @@ class Chatbot():
             else:
                 return "Conta não encontrada"
         if '/funcoes' in frase:
-            return "/consultar <RA>   Para consultar um RA não vinculado a conta\n/minhasala   Para receber onde será a sua sala\n/criadopor   Para saber quem é meu criador"
+            return "/minhasala   Para receber onde sera a sua sala\n/consultar <RA>   Para consultar a sala de um RA nao vinculado a conta\n/criadopor   Para saber quem e meu criador"
         if '/contascadastradas' in frase:
             return self.banco.listarUsuarios()
         if '/criadopor' in frase:
