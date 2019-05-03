@@ -1,6 +1,9 @@
 import telepot
 import ChatBot
 from Banco import Banco
+from Funções import pegaHorario
+from Funções import resposta
+import time
 
 bot_token = '823857629:AAFwWPAHsYANt6Za3bZcYFazY1-Cof7kxNw'
 banco = Banco()
@@ -24,8 +27,13 @@ def recebendoMsg(msg):
         else:
             telegram.sendMessage(chatID, resposta)
 
-
 telegram.message_loop(recebendoMsg)
+
 while True:
-    pass
-    #Acrescentar função de envio de mensagem automática ao chegar no horário
+    horario = pegaHorario()
+    if horario == "12:00":
+        for aux in banco.Usuarios.find():
+            chatid = aux['chatid']
+            ra = aux['ra']
+            telegram.sendMessage(chatid, "-Aviso Automático-\n" + resposta(ra))
+        time.sleep(60)

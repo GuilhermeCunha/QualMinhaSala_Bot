@@ -7,7 +7,11 @@ banco = Banco()
 #print(banco.numeroUsuarios())
 #print(banco.listarUsuarios())
 #print(banco.listarUsuarios())
-banco.apagarCollection()
-print(banco.numeroUsuarios())
-
+lista = []
+for aux in banco.Usuarios.find():
+    print(aux['first_name'])
+    lista.append(aux)
+    print(aux)
+print("\n")
+print(lista[0]['ra'])
 

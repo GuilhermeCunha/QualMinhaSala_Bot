@@ -12,6 +12,7 @@ class Banco():
         self.db = self.connection[self.MONGO_DB]
         self.db.authenticate(self.MONGO_USER, self.MONGO_PASS)
         self.Usuarios = self.db.get_collection("Usuarios")
+        #self.Horarios = self.db.get_collection("Horarios")
 
     def inserirUsuario(self, novoUsuario):
         try:
@@ -21,6 +22,15 @@ class Banco():
             return True
         except:
             return "Error"
+    def inserirHorario(self, novoHorarioID):
+        try:
+            for horaid in self.Horarios.find(novoHorarioID):
+                return False
+            self.Horarios.insert_one(novoHorarioID)
+            return True
+        except:
+            return "Error"
+
     def acharUsuario(self, usuario):
         for us in self.Usuarios.find(usuario):
             return us
