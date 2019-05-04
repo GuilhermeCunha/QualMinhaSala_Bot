@@ -13,39 +13,75 @@ class Chatbot():
     def escuta(self, frase=None):
         if frase == None:
             return 0
-
         frase = str(frase)
         frase = frase.lower()
         frase = unidecode(frase)
         return frase
 
     def pensa(self, primeiroNome, chatID, frase):
+
         if '/start' in frase:
             return "Seja bem vindo ao MinhaAula!\n Digite seu RA para finalizar a criação da sua conta!"
+
         if '/consultar' in frase:
             texto = str(frase)
             mensagem = texto.split(" ")
             return Funções.resposta(mensagem[1])
+
         if '162.' in frase:
             usuario = {'first_name': primeiroNome, 'chatid': str(chatID), 'ra': frase}
             if self.banco.acharUsuario(usuario):
                 return "Conta já cadastrada"
             self.banco.inserirUsuario(usuario)
-            return "Conta cadastrada com sucesso\n\nPara saber quais as funções disponíveis, escreva: /funcoes"
+            return "Conta cadastrada com sucesso\n\nOBS: Estou configurado para enviar mensagens automáticas avisando onde será a sua aula às 12:00 de todos os dias da semana, caso queira saber mais sobre a ativação/desativação deste serviço, escreva: /sabersobremensagens\n\nPara saber quais as funções disponíveis, escreva: /comandos"
+        if '/sabersobremensagens' in frase:
+            return "Ao cadastrar uma conta em meu sistema, estou configurado para te enviar onde será sua sala em todos os dias úteis da semana às 12:00.\n\n" \
+                   "Caso queira desabilitar este serviço, e quem sabe reativálo futuramente, consulte o comando: /comandos."
         if '/minhasala' in frase:
             ra = self.banco.acharRAporID(chatID)
             if ra:
                 return Funções.resposta(ra)
             else:
                 return "Conta não encontrada"
-        if '/funcoes' in frase:
-            return "/minhasala   Para receber onde será a sua sala\n/consultar <RA>   Para consultar a sala de um RA não vinculado a conta\n/criadopor   Para saber quem é meu criador"
+
+        if '/desativarmensagensautomaticas' in frase:
+            print("/autoMsgsOF")
+            usuario = {'first_name': primeiroNome, 'chatid': str(chatID)}
+            if self.banco.desativarMensagensAutomaticas(usuario):
+                return "Você não receberá mais mensagens automáticas"
+            else:
+                return "Algum erro ocorreu"
+
+        if '/ativarmensagensautomaticas' in frase:
+            print("/autoMsgsON")
+            usuario = {'first_name': primeiroNome, 'chatid': str(chatID)}
+            print(usuario)
+            if self.banco.ativarMensagensAutomaticas(usuario):
+                return "As suas mensagens automáticas estão habilitadas!"
+            else:
+                return "Algum erro ocorreu"
+
+        if '/comandos' in frase:
+            return "/minhasala   Para receber onde será a sua sala" \
+                   "\n/consultar <RA>   Para consultar a sala de um RA não vinculado a conta" \
+                   "\n/descadastrar   Para remover a sua conta do nosso sistema" \
+                   "\n/criadopor   Para saber quem é meu criador"\
+                   "\n/desativarmensagensautomaticas   Para desativar as mensagens automáticas às 12:00"\
+                   "\n/ativarmensagensautomaticas   Para ativar as mensagens automáticas às 12:00"
+
         if '/contascadastradas' in frase:
             return self.banco.listarUsuarios()
+
+        if '/descadastrar' in frase:
+            usuario = {'chatid': str(chatID)}
+            print(usuario)
+            if self.banco.removerUsuario(usuario):
+                self.banco.ativarMensagensAutomaticas(usuario)
+                return "Conta deletada com sucesso"
+            return "Esta conta não foi encontrada"
+
         if '/criadopor' in frase:
             return "Criador"
 
-            return
-        return 'Função não configurada'
+        return
 
-    #def fala(self,chatID, frase):

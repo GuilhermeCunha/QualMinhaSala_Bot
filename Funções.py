@@ -2,6 +2,7 @@ from datetime import datetime  #Pegar horário atual
 import requests  # Pegar JSON do API do site
 from unidecode import unidecode  # Tirar acentos de uma string
 from datetime import datetime # Pegar o horário
+from datetime import date # Pegar data
 from pytz import timezone # Pegar o horário de um certo local
 
 def resposta(ra):
@@ -10,21 +11,24 @@ def resposta(ra):
         url = "http://senaiweb.fieb.org.br/MinhaAula/api/aulas?ra=" + ra
         objeto = requests.get(url).json()
     except:
-        return ("Algum erro ocorreu, confira seu RA")
+        return ("Error")
+    try:
 
-    nomeProfessor = objeto[0]['professor']
-    turno = objeto[0]['turno']
-    codTurma = objeto[0]['codTurma']
-    dtInicial = objeto[0]['dtInicial']
-    dtFinal = objeto[0]['dtFinal']
-    curso = unidecode(objeto[0]['curso'])
-    disciplina = objeto[0]['disciplina']
-    predio = objeto[0]['predio']
-    bloco = objeto[0]['bloco']
-    sala = objeto[0]['sala']
-    data = objeto[0]['data']
-    horaInicial = objeto[0]['horaInicial']
-    horaFinal = objeto[0]['horaFinal']
+        nomeProfessor = objeto[0]['professor']
+        turno = objeto[0]['turno']
+        codTurma = objeto[0]['codTurma']
+        dtInicial = objeto[0]['dtInicial']
+        dtFinal = objeto[0]['dtFinal']
+        curso = unidecode(objeto[0]['curso'])
+        disciplina = objeto[0]['disciplina']
+        predio = objeto[0]['predio']
+        bloco = objeto[0]['bloco']
+        sala = objeto[0]['sala']
+        data = objeto[0]['data']
+        horaInicial = objeto[0]['horaInicial']
+        horaFinal = objeto[0]['horaFinal']
+    except:
+        return "Nenhuma aula hoje encontrada para o RA informado"
 
     nomeCurso = curso + '\n\n'
 
@@ -72,4 +76,19 @@ def pegaHorario():
     dataBahia = dataUTC.astimezone(timezone('America/Bahia'))
     horaBahia = dataBahia.strftime('%H:%M')
     return horaBahia
+def pegaDia():
+    DIAS = [
+        'Segunda-feira',
+        'Terça-feira',
+        'Quarta-feira',
+        'Quinta-Feira',
+        'Sexta-feira',
+        'Sábado',
+        'Domingo'
+    ]
+    data_atual = date.today()
+    indice_da_semana = data_atual.weekday()
+    dia_da_semana = DIAS[indice_da_semana]
+    #numero_do_dia_da_semana = data_atual.isoweekday()
+    return dia_da_semana
 
