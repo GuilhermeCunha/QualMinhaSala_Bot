@@ -12,7 +12,36 @@ class Banco():
         self.db = self.connection[self.MONGO_DB]
         self.db.authenticate(self.MONGO_USER, self.MONGO_PASS)
         self.Usuarios = self.db.get_collection("Usuarios")
-        #self.Horarios = self.db.get_collection("Horarios")
+        self.MensagensDesativadas = self.db.get_collection("MensagensDesativadas")
+
+    def desativarMensagensAutomaticas(self, usuario):
+        usuarioCompleto = 0
+        for us in self.Usuarios.find(usuario):
+            usuarioCompleto = us
+        if usuarioCompleto != 0:
+            self.MensagensDesativadas.insert_one(usuarioCompleto)
+            return True
+        return False
+    def ativarMensagensAutomaticas(self, usuario):
+        usuarioCompleto = 0
+        for us in self.Usuarios.find(usuario):
+            usuarioCompleto = us
+        if usuarioCompleto != 0:
+            self.MensagensDesativadas.delete_one(usuarioCompleto)
+            return True
+        return False
+
+    def removerUsuario(self, usuario):
+        try:
+            for aux in self.Usuarios.find(usuario):
+                print(aux)
+                id = aux['_id']
+                self.Usuarios.remove({'_id': id})
+                return True
+            else:
+                return False
+        except:
+            return "Error"
 
     def inserirUsuario(self, novoUsuario):
         try:
@@ -22,14 +51,14 @@ class Banco():
             return True
         except:
             return "Error"
-    def inserirHorario(self, novoHorarioID):
+    def verifMensagensAutomaticasDesativadas(self, usuario):
         try:
-            for horaid in self.Horarios.find(novoHorarioID):
-                return False
-            self.Horarios.insert_one(novoHorarioID)
-            return True
+            for us in self.MensagensDesativadas.find(usuario):
+                return True
+            return False
         except:
-            return "Error"
+            print("Error")
+            return
 
     def acharUsuario(self, usuario):
         for us in self.Usuarios.find(usuario):
@@ -52,10 +81,15 @@ class Banco():
         lista = []
         i=0
         while i < self.numeroUsuarios():
-            nome = str(self.Usuarios.find()[i]['first_name'])
-            chatID = str(self.Usuarios.find()[i]['chatid'])
-            ra = str(self.Usuarios.find()[i]['ra'])
-            info = "Nome: " + nome + "\n" + "ChatID: " + chatID + "\n" + "RA: " + ra + "\n\n"
+            Usuario = self.Usuarios.find()[i]
+            nome = str(Usuario['first_name'])
+            chatID = str(Usuario['chatid'])
+            ra = str(Usuario['ra'])
+            if not self.verifMensagensAutomaticasDesativadas(Usuario):
+                mensagensAutomaticas = "Ativado"
+            else:
+                mensagensAutomaticas = "Desativado"
+            info = "Nome: " + nome + "\n" + "ChatID: " + chatID + "\n" + "RA: " + ra + "\n" + "Mensagens Automáticas: "+ mensagensAutomaticas + "\n\n"
             lista.append(info)
             i += 1
         i=0
@@ -64,7 +98,6 @@ class Banco():
             texto += lista[i]
             i += 1
         return texto
-        return True
 
 
 

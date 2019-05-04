@@ -2,6 +2,7 @@ import telepot
 import ChatBot
 from Banco import Banco
 from Funções import pegaHorario
+from Funções import pegaDia
 from Funções import resposta
 import time
 
@@ -31,9 +32,14 @@ telegram.message_loop(recebendoMsg)
 
 while True:
     horario = pegaHorario()
-    if horario == "12:00":
-        for aux in banco.Usuarios.find():
-            chatid = aux['chatid']
-            ra = aux['ra']
-            telegram.sendMessage(chatid, "-Aviso Automático-\n" + resposta(ra))
-        time.sleep(60)
+    dia = pegaDia()
+
+    if('Sábado' not in dia  and 'Domingo' not in dia):
+        if horario == "12:00":
+            for aux in banco.Usuarios.find():
+                usuario = {'chatid': aux['chatid']}
+                if not banco.verifMensagensAutomaticasDesativadas(usuario):
+                    chatid = aux['chatid']
+                    ra = aux['ra']
+                    telegram.sendMessage(chatid,"__Mensagem Automática__" + str(resposta(ra)))
+            time.sleep(60)
