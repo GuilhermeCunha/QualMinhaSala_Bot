@@ -41,5 +41,5 @@ while True:
                 if not banco.verifMensagensAutomaticasDesativadas(usuario):
                     chatid = aux['chatid']
                     ra = aux['ra']
-                    telegram.sendMessage(chatid,"__Mensagem Automática__" + str(resposta(ra)))
+                    telegram.sendMessage(chatid,"__Mensagem Automática__\n" + str(resposta(ra)))
             time.sleep(60)

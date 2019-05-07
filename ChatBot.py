@@ -45,7 +45,6 @@ class Chatbot():
                 return "Conta não encontrada"
 
         if '/desativarmensagensautomaticas' == frase:
-            print("/autoMsgsOF")
             usuario = {'first_name': primeiroNome, 'chatid': str(chatID)}
             if self.banco.desativarMensagensAutomaticas(usuario):
                 return "Você não receberá mais mensagens automáticas"
@@ -53,7 +52,6 @@ class Chatbot():
                 return "Algum erro ocorreu"
 
         if '/ativarmensagensautomaticas' == frase:
-            print("/autoMsgsON")
             usuario = {'first_name': primeiroNome, 'chatid': str(chatID)}
             print(usuario)
             if self.banco.ativarMensagensAutomaticas(usuario):
